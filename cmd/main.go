@@ -6,14 +6,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "redis-cli"
+	app.Name = "redisproto"
 	app.Usage = "A simple command line tool for interacting with Redis in protobuf binary format"
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		{
 			Name:    "set",
 			Aliases: []string{"s"},
@@ -22,18 +22,18 @@ func main() {
 				return nil
 			},
 			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "key, k",
+				&cli.StringFlag{
+					Name:  "key",
 					Value: "",
 					Usage: "The key to set in Redis",
 				},
-				cli.StringFlag{
-					Name:  "field1, f1",
+				&cli.StringFlag{
+					Name:  "field1",
 					Value: "",
 					Usage: "The value of field1 in protobuf message",
 				},
-				cli.StringFlag{
-					Name:  "field2, f2",
+				&cli.StringFlag{
+					Name:  "field2",
 					Value: "",
 					Usage: "The value of field2 in protobuf message",
 				},
@@ -41,18 +41,15 @@ func main() {
 		},
 	}
 
-	for {
-		fmt.Print("> ")
-		input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-		input = strings.TrimSpace(input)
+	fmt.Print("> ")
+	input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	input = strings.TrimSpace(input)
 
-		if input == "exit" {
-			break
-		}
+	if input == "exit" {
+		return
+	}
 
-		// pass the input to the cli app and let it handle the command
-		if err := app.Run(strings.Fields(input)); err != nil {
-			fmt.Println(err)
-		}
+	if err := app.Run(strings.Fields(input)); err != nil {
+		fmt.Println(err)
 	}
 }
